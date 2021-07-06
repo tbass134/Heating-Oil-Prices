@@ -10,6 +10,7 @@ load_dotenv()
 session = boto3.Session(
     aws_access_key_id=os.getenv("AWS_ACCESS_KEY"),
     aws_secret_access_key=os.getenv("AWS_SECRET_KEY"),
+
 )
 
 dynamodb = session.resource('dynamodb')
@@ -25,7 +26,7 @@ table = dynamodb.Table('heating_oil_prices')
 def load_data():
     response = table.scan()
     df = pd.DataFrame(response["Items"])
-    df = pd.read_csv("data.csv", usecols=["last_updated", "price150","price500", "price300", "supplier", "state"])
+    # df = pd.read_csv("data.csv", usecols=["last_updated", "price150","price500", "price300", "supplier", "state"])
     df.rename({
         "price150":"Price per 150 Gallons",
         "price300":"Price per 300 Gallons",
