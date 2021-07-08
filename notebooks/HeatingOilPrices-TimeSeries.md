@@ -9,7 +9,7 @@ As the price of gas goes up and down, the price of heating oil is the same. Ther
 ## Data
 Before building the models, i needed to get data. I have been unable to find a dataset with the current price of oil, therefore I had to build my own. The website cheapestoil.com shows the price of oil for many companies in the northeast United States. The site shows the latest prices for these companies, but they do not show the previous prices. 
 
-So in order to get the prices, I build a AWS lambda function that scrapes the price of oil daily. I used AWS CloudWatch events to run a lambda function every 12 hours, in order to fetch the prices for that time. This lambda extracted the last updated date, price and supplier, and save these results as JSON and save  to an S3 bucket. After the json data is saved, I have another lambda function, attached as a trigger, to read each json file, and save into DynamoDB.  I'll be writing another post on how I gathered the data
+So in order to get the prices, I build a AWS lambda function that scrapes the price of oil daily. I used AWS CloudWatch events to run a lambda function every 12 hours, in order to fetch the prices for that time. This lambda extracted the last updated date, price and supplier, and save these results as JSON and save  to an S3 bucket. After the json data is saved, I have another lambda function, attached as a trigger, to read each json file, and save into DynamoDB.  Please see this [GitHub repo](https://github.com/tbass134/Heating-Oil-Prices) for more detail on how I build these lambda functions. 
 
 I started this project back in Dec 2020 in order to build up my dataset. The lambda function has been running for about 6 months, and I have a decent amount of data to work with. In order to expand my dataset, I was able to pull more data using The Wayback Machine on web.archive.org. The Wayback Machine stores a snapshot of many pages on the internet. It doesn't have every site, but it did have some snapshots from cheaptestoil.com. To get that data, I used https://github.com/hartator/wayback-machine-downloader to download the archive data. The archive only had 7 snapshots, between the dates of Aug 2020 and Oct 2021. 
 
@@ -470,7 +470,11 @@ test = data[mask:]
 train.shape, test.shape
 ```
 
+
+
+
     ((43, 4), (18, 4))
+
 
 
 After we split the data into a train, test set, we then must initalize the regression setup in PyCaret. This includes suppling the dataset, the feature we are predicting on (`price500`) and the other features to use(`last_updatedYear`,`last_updatedMonth` and `last_updatedDay`)
@@ -489,7 +493,7 @@ Next we call the `compare_models` function to find the best model using the Mean
 best = compare_models(sort = 'MAE')
 ```
 
-From the results above, it looks like the 	Passive Aggressive Regressor has the lowest MAE error(0.0605), so we'll use that model on the test set
+From the results above, it looks like the	Passive Aggressive Regressor has the lowest MAE error(0.0605), so we'll use that model on the test set
 
 
 ```python
@@ -497,6 +501,7 @@ preds = predict_model(best)
 ```
 
 Next, we'll use this model and generate a forecast for the next 7 days worth of prices 
+
 
 
 ```python
@@ -629,7 +634,6 @@ for feature in ["price150", "price300", "price500"]:
     df = get_data()
     train(df, feature)
 ```
-
 
     Transformation Pipeline and Model Succesfully Saved
 
