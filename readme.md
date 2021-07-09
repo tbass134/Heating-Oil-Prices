@@ -1,5 +1,5 @@
 
-# Time Series Price forecasting on Heating Oil Prices
+# Time Series forecasting on Heating Oil Prices
 
 ![](images/dashboard.png)
 
